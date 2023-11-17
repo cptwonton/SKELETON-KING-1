@@ -1,20 +1,20 @@
 ﻿namespace ZORGATH;
 
 [ApiController]
-[Route("client_requester.php")]
+[Route("server_requester.php")]
 [Consumes("application/x-www-form-urlencoded")]
 
-public class ClientRequesterController : ControllerBase
+public class ServerRequesterController : ControllerBase
 {
-    private readonly IReadOnlyDictionary<string, IClientRequestHandler> _clientRequestHandlers;
+    private readonly IReadOnlyDictionary<string, IServerRequestHandler> _serverRequestHandlers;
 
-    public ClientRequesterController(IReadOnlyDictionary<string, IClientRequestHandler> clientRequestHandlers)
+    public ServerRequesterController(IReadOnlyDictionary<string, IServerRequestHandler> serverRequestHandlers)
     {
-        _clientRequestHandlers = clientRequestHandlers;
+        _serverRequestHandlers = serverRequestHandlers;
     }
 
-    [HttpPost(Name = "Client Requester")]
-    public async Task<IActionResult> ClientRequester([FromForm] Dictionary<string, string> formData)
+    [HttpPost(Name = "Server Requester")]
+    public async Task<IActionResult> ServerRequester([FromForm] Dictionary<string, string> formData)
     {
         // Client requester has two forms for function identifiers. Some are
         // part of the query in the format `client_requester.php?f=`. Others
@@ -35,13 +35,13 @@ public class ClientRequesterController : ControllerBase
             return BadRequest("Unknown request.");
         }
 
-        if (_clientRequestHandlers.TryGetValue(functionName, out var requestHandler))
+        if (_serverRequestHandlers.TryGetValue(functionName, out var requestHandler))
         {
             return await requestHandler.HandleRequest(ControllerContext, formData);
         }
 
         // Unknown request name.
-        Console.WriteLine("Unknown client request '{0}'.", functionName);
+        Console.WriteLine("Unknown server request '{0}'.", functionName);
         return BadRequest(functionName);
     }
 }

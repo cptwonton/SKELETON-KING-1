@@ -47,7 +47,7 @@ public class Account
     public ICollection<string> IgnoredList { get; set; }
 
     [Required]
-    public ICollection<string> SelectedUpgradeCodes;
+    public ICollection<string> SelectedUpgradeCodes { get; set; }
 
     [StringLength(32)]
     public string? Cookie { get; set; }

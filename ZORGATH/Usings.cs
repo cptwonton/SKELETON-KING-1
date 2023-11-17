@@ -21,6 +21,7 @@ global using SecureRemotePassword;
 #region System Using Directives
 global using System.Collections;
 global using System.Collections.Concurrent;
+global using System.Diagnostics;
 global using System.Reflection;
 global using System.Runtime.CompilerServices;
 global using System.Security.Cryptography;

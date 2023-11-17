@@ -31,6 +31,7 @@ public class PHP
         else if (type == typeof(double)) { serializer = new DoubleSerializer(); }
         else if (type == typeof(float)) { serializer = new FloatSerializer(); }
         else if (type == typeof(long)) { serializer = new LongSerializer(); }
+        else if (type == typeof(short)) { serializer = new ShortSerializer(); }
         else if (type.IsEnum)
         {
             serializer = new EnumSerializer();
@@ -186,6 +187,14 @@ public class PHP
         sb.Append(';');
     }
 
+    private static void AppendShort(StringBuilder sb, short value)
+    {
+        sb.Append('i');
+        sb.Append(':');
+        sb.Append(value);
+        sb.Append(';');
+    }
+
     private static void AppendDouble(StringBuilder sb, double value)
     {
         sb.Append('d');
@@ -263,6 +272,11 @@ public class PHP
     private class LongSerializer : ISerializer
     {
         public void Serialize(StringBuilder sb, object data) { AppendLong(sb, (long)data); }
+    }
+
+    private class ShortSerializer : ISerializer
+    {
+        public void Serialize(StringBuilder sb, object data) { AppendShort(sb, (short)data); }
     }
     private class EnumSerializer : ISerializer
     {

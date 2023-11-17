@@ -3,7 +3,7 @@
 /// <summary>
 ///     Handler for "get_match_stats" request.
 /// </summary>
-public class GetMatchStatsHandler : IClientRequesterHandler
+public class GetMatchStatsHandler : IClientRequestHandler
 {
     private string _replayServerUrl;
     private record AccountIdWithSelectedUpgradeCodes(int AccountId, ICollection<string> SelectedUpgradeCodes);

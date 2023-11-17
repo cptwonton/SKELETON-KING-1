@@ -13,7 +13,7 @@ public record ShowSimpleStatsData(
     SeasonShortSummary SeasonNormal,
     SeasonShortSummary SeasonCasual);
 
-public class ShowSimpleStatsHandler : IClientRequesterHandler
+public class ShowSimpleStatsHandler : IClientRequestHandler
 {
     private const int NumberOfHeroesTheGameHas = 139;
 

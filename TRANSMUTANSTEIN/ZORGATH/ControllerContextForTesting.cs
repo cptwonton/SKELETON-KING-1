@@ -8,7 +8,7 @@ public class ControllerContextForTesting : ControllerContext
         ServiceCollection serviceCollection = new();
         serviceCollection.AddDbContextFactory<BountyContext>((sp, options) =>
         {
-            options.UseSqlite(connection);
+            options.UseSqlite(connection).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
         ServiceProvidersFeature serviceProvidersFeature = new()

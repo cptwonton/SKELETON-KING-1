@@ -18,6 +18,9 @@ public class BountyContext : IdentityDbContext<ElementUser>
 
     public DbSet<CloudStorage> CloudStorages { get; set; } = null!;
 
+    public DbSet<GameServer> GameServers { get; set; } = null!;
+    public DbSet<GameServerManager> GameServerManagers { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

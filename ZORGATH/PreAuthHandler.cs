@@ -7,7 +7,7 @@ public record AccountInfo(string Salt, string PasswordSalt, string HashedPasswor
 /// Performs the first half of the SRP key exchange. Stores the intermediate results in a ConcurrentDictionary for the
 /// second half of the SRP to validate the exchange.
 /// </summary>
-public class PreAuthHandler : IClientRequesterHandler
+public class PreAuthHandler : IClientRequestHandler
 {
     private readonly ConcurrentDictionary<string, SrpAuthSessionData> _srpAuthSessions;
 

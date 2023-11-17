@@ -19,10 +19,12 @@ public class Program
             options.UseSqlServer(connectionString, connection => connection.MigrationsAssembly("SKELETON-KING")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
+        // TODO: store in a configuration file.
+        ChatServerConfiguration chatServerConfiguration = new ChatServerConfiguration("localhost", 10031, 10032, 10033);
         ConcurrentDictionary<string, SrpAuthSessionData> srpAuthSessions = new();
 
-        builder.Services.AddSingleton<IReadOnlyDictionary<string, IClientRequesterHandler>>(
-            new Dictionary<string, IClientRequesterHandler>()
+        builder.Services.AddSingleton<IReadOnlyDictionary<string, IClientRequestHandler>>(
+            new Dictionary<string, IClientRequestHandler>()
             {
                 // NOTE: Please keep this list alphabetized by the string literal in the key.
                 {"autocompleteNicks", new AutoCompleteNicksHandler() },
@@ -30,14 +32,26 @@ public class Program
                 {"match_history_overview", new MatchHistoryOverviewHandler() },
                 {"pre_auth", new PreAuthHandler(srpAuthSessions) },
                 {"show_simple_stats", new ShowSimpleStatsHandler() },
-                {"srpAuth", new SrpAuthHandler(srpAuthSessions, new(), chatServerUrl: "localhost", icbUrl: "kongor.online") },
+                {"srpAuth", new SrpAuthHandler(srpAuthSessions, new(), chatServerUrl: chatServerConfiguration.Address, icbUrl: "kongor.online") },
             }
         );
+
+        VersionProvider versionProvider = new VersionProvider("http://gitea.kongor.online", "/administrator/KONGOR/raw/branch/main/patch/");
+        builder.Services.AddSingleton<IReadOnlyDictionary<string, IServerRequestHandler>>(
+            new Dictionary<string, IServerRequestHandler>()
+            {
+                // NOTE: Please keep this list alphabetized by the string literal in the key.
+                {"new_session", new NewSessionHandler(versionProvider, chatServerConfiguration.Address, chatServerConfiguration.ServerPort) },
+                {"replay_auth", new ReplayAuthHandler(chatServerConfiguration.Address, chatServerConfiguration.ManagerPort) },
+                {"set_online", new SetOnlineHandler() },
+            }
+        );
+
         builder.Services.AddSingleton<ChatServer>();
+        builder.Services.AddControllers().AddApplicationPart(typeof(ClientRequesterController).Assembly);
 
         var app = builder.Build();
         app.MapControllers();
-
         app.Services.GetRequiredService<ChatServer>().Start();
         app.Run();
     }
