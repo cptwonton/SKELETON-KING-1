@@ -11,6 +11,7 @@ public class ChatServer
     private readonly TcpListener _managerListener;
 
     public static readonly ConcurrentDictionary<int, ConnectedClient> ConnectedClientsByAccountId = new();
+    public static readonly ConcurrentDictionary<int, ConnectedServer> ConnectedServersByAccountId = new();
     public static readonly ConcurrentDictionary<int, Client.ChatChannel> ChatChannelsByChannelId = new();
     public static readonly ConcurrentDictionary<string, Client.ChatChannel> ChatChannelsByUpperCaseName = new();
 

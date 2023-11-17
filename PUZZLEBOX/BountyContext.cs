@@ -19,7 +19,6 @@ public class BountyContext : IdentityDbContext<ElementUser>
     public DbSet<CloudStorage> CloudStorages { get; set; } = null!;
 
     public DbSet<GameServer> GameServers { get; set; } = null!;
-    public DbSet<GameServerManager> GameServerManagers { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -51,19 +50,19 @@ public class BountyContext : IdentityDbContext<ElementUser>
                     .Property(nameof(ElementUser.UnlockedUpgradeCodes))
                     .HasConversion(splitStringConverter, listValueComparer);
         modelBuilder.Entity<ElementUser>()
-                   .Property(nameof(ElementUser.Id))
-                   .HasMaxLength(36);
+                    .Property(nameof(ElementUser.Id))
+                    .HasMaxLength(36);
         modelBuilder.Entity<ElementUser>()
-                   .Property(nameof(ElementUser.UserName))
-                   .HasMaxLength(15);
+                    .Property(nameof(ElementUser.UserName))
+                    .HasMaxLength(15);
         modelBuilder.Entity<ElementUser>()
-                   .Property(nameof(ElementUser.NormalizedUserName))
-                   .HasMaxLength(15);
+                    .Property(nameof(ElementUser.NormalizedUserName))
+                    .HasMaxLength(15);
         modelBuilder.Entity<ElementUser>()
-                   .Property(nameof(ElementUser.SecurityStamp))
-                   .HasMaxLength(32);
+                    .Property(nameof(ElementUser.SecurityStamp))
+                    .HasMaxLength(32);
         modelBuilder.Entity<ElementUser>()
-                   .Property(nameof(ElementUser.ConcurrencyStamp))
-                   .HasMaxLength(36);
+                    .Property(nameof(ElementUser.ConcurrencyStamp))
+                    .HasMaxLength(36);
     }
 }

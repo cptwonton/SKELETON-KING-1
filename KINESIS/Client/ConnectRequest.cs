@@ -92,7 +92,7 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         if (data == null)
         {
             // Invalid session cookie, reject this connection.
-            connectedClient.SendResponse(new ConnectionRejectedResponse(ChatRejectReason.AuthFailed));
+            connectedClient.SendResponse(new ConnectionRejectedResponse(ConnectionRejectedReason.AuthFailed));
             connectedClient.Disconnect("Authentication Failed");
             return;
         }
@@ -101,7 +101,7 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         string clientVersion = $"{_clientVersionMajor}.{_clientVersionMinor}.{_clientVersionMicro}";
         if (clientVersion != upToDateClientVersion)
         {
-            connectedClient.SendResponse(new ConnectionRejectedResponse(ChatRejectReason.BadVersion));
+            connectedClient.SendResponse(new ConnectionRejectedResponse(ConnectionRejectedReason.BadVersion));
             connectedClient.Disconnect("Client Version Does Not Match");
             return;
         }
@@ -112,10 +112,10 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         // Disconnect all subaccounts, if any are online.
         foreach (int otherAccountId in bountyContext.Accounts.Where(a => a.User.Id == data.UserId).Select(a => a.AccountId))
         {
-            if (ChatServer.ConnectedClientsByAccountId.TryGetValue(otherAccountId, out var otherConnectedClient))
+            if (ChatServer.ConnectedClientsByAccountId.TryRemove(otherAccountId, out var otherConnectedClient))
             {
                 // Drop older client.
-                otherConnectedClient.SendResponse(new ConnectionRejectedResponse(ChatRejectReason.AccountSharing));
+                otherConnectedClient.SendResponse(new ConnectionRejectedResponse(ConnectionRejectedReason.AccountSharing));
                 otherConnectedClient.Disconnect("Another Client Instance Has Replaced This Client Instance");
             }
         }

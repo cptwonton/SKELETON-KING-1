@@ -51,7 +51,7 @@ public class NewSessionHandler : IServerRequestHandler
             return new UnauthorizedResult();
         }
 
-        int managerId = authData.AccountId;
+        int accountId = authData.AccountId;
         string address = formData["ip"];
         short port = short.Parse(formData["port"]);
         string location = formData["location"];
@@ -60,7 +60,7 @@ public class NewSessionHandler : IServerRequestHandler
         int serverId;
         string cookie = Guid.NewGuid().ToString("N");
         int? existingGameServerId = await bountyContext.GameServers
-                .Where(server => server.GameServerManagerId == managerId && server.Address == address && server.Port == port && server.Location == location && server.Name == name)
+                .Where(server => server.Account.AccountId == accountId && server.Address == address && server.Port == port && server.Location == location && server.Name == name)
                 .Select(gameServer => gameServer.GameServerId)
                 .FirstOrDefaultAsync();
         if (existingGameServerId == null)
@@ -70,7 +70,7 @@ public class NewSessionHandler : IServerRequestHandler
             GameServer gameServer = new GameServer(
                 // Poor man's auto-increment.
                 gameServerId: serverId,
-                gameServerManagerId: managerId,
+                accountId: accountId,
                 timestampCreated: DateTime.UtcNow,
                 timestampLastSession: null,
                 address: address,

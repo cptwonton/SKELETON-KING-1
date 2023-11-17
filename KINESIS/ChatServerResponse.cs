@@ -2,8 +2,6 @@
 
 public class ChatServerResponse
 {
-    
-
     public const short ReceivedChatChannelMessage = 0x0003;
     public const short FullChannelUpdate = 0x0004;
     public const short JoinedChatChannel = 0x0005;
@@ -21,6 +19,9 @@ public class ChatServerResponse
 
     public const short StartedLoadingResources = 0x0F03;
     public const short RefreshMatchmakingStatsResponse = 0x0F07;
+
+    public const short ServerConnectionAccepted = 0x1500;
+    public const short ServerConnectionRejected = 0x1501;
 
     public const short ConnectionAccepted = 0x1C00;
     public const short ConnectionRejected = 0x1C01;

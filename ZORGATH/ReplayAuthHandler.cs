@@ -48,21 +48,11 @@ public class ReplayAuthHandler : IServerRequestHandler
 
         // Cookie to connect to the ChatServer.
         string sessionCookie = Guid.NewGuid().ToString("N");
-        int? existingManagerId = await bountyContext.GameServerManagers
-            .Where(manager => manager.GameServerManagerId == data.AccountId)
-            .Select(manager => manager.GameServerManagerId)
-            .FirstOrDefaultAsync();
-        if (existingManagerId == null)
-        {
-            bountyContext.GameServerManagers.Add(new GameServerManager(data.AccountId, sessionCookie));
-            await bountyContext.SaveChangesAsync();
-        }
-        else
-        {
-            bountyContext.GameServerManagers
-                .Where(manager => manager.GameServerManagerId == existingManagerId.Value)
-                .ExecuteUpdate(s => s.SetProperty(b => b.Cookie, b => sessionCookie));
-        }
+
+        // Update the cookie.
+        bountyContext.Accounts
+            .Where(account => account.AccountId == data.AccountId)
+            .ExecuteUpdate(s => s.SetProperty(b => b.Cookie, b => sessionCookie));
 
         Dictionary<string, object> response = new()
         {

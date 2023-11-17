@@ -14,4 +14,7 @@ public class ChatServerRequest
     public const short EnterMatchmakingQueue = 0x0D05;
     public const short RefreshMatchmakingSettings = 0x0D07;
     public const short RefreshMatchmakingStats = 0x0F07;
+    public const short ServerConnect = 0x0500;
+    public const short ServerDisconnect = 0x0501;
+    public const short UpdateServerStatus = 0x0502;
 }

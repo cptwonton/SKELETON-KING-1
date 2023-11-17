@@ -2,10 +2,10 @@
 
 public class GameServer
 {
-    public GameServer(int gameServerId, int gameServerManagerId, DateTime timestampCreated, DateTime? timestampLastSession, string address, short port, string location, string name, string cookie)
+    public GameServer(int gameServerId, int accountId, DateTime timestampCreated, DateTime? timestampLastSession, string address, short port, string location, string name, string cookie)
     {
         GameServerId = gameServerId;
-        GameServerManagerId = gameServerManagerId;
+        AccountId = accountId;
         TimestampCreated = timestampCreated;
         TimestampLastSession = timestampLastSession;
         Address = address;
@@ -18,7 +18,10 @@ public class GameServer
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int GameServerId { get; set; }
 
-    public int GameServerManagerId { get; set; }
+    [Column("GameServerManagerId")]
+    public int AccountId { get; set; }
+
+    public Account Account { get; set; } = null!;
 
     [Required]
     public DateTime TimestampCreated { get; private set; }

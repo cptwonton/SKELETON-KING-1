@@ -1,10 +1,10 @@
-﻿namespace KINESIS.Client;
+﻿namespace KINESIS.Server;
 
-public class ConnectionRejectedResponse : ProtocolResponse
+public class ServerConnectionRejectedResponse : ProtocolResponse
 {
     private readonly ConnectionRejectedReason _reason;
 
-    public ConnectionRejectedResponse(ConnectionRejectedReason reason)
+    public ServerConnectionRejectedResponse(ConnectionRejectedReason reason)
     {
         _reason = reason;
     }
@@ -12,7 +12,7 @@ public class ConnectionRejectedResponse : ProtocolResponse
     public override CommandBuffer Encode()
     {
         CommandBuffer buffer = new();
-        buffer.WriteInt16(ChatServerResponse.ConnectionRejected);
+        buffer.WriteInt16(ChatServerResponse.ServerConnectionRejected);
         buffer.WriteInt8(Convert.ToByte(_reason));
         return buffer;
     }
