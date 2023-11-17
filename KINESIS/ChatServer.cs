@@ -4,7 +4,11 @@ public class ChatServer
 {
     private readonly IDbContextFactory<BountyContext> _dbContextFactory;
     private readonly IProtocolRequestFactory<ConnectedClient> _clientProtocolRequestFactory;
+    private readonly IProtocolRequestFactory<ConnectedServer> _serverProtocolRequestFactory;
+    private readonly IProtocolRequestFactory<ConnectedManager> _managerProtocolRequestFactory;
     private readonly TcpListener _clientListener;
+    private readonly TcpListener _serverListener;
+    private readonly TcpListener _managerListener;
 
     public static readonly ConcurrentDictionary<int, ConnectedClient> ConnectedClientsByAccountId = new();
     public static readonly ConcurrentDictionary<int, Client.ChatChannel> ChatChannelsByChannelId = new();
@@ -12,13 +16,17 @@ public class ChatServer
 
     public static Matchmaking.MatchmakingSettingsResponse MatchmakingSettingsResponse = null!;
 
-    public ChatServer(IDbContextFactory<BountyContext> dbContextFactory, IConfiguration configuration)
+    public ChatServer(IDbContextFactory<BountyContext> dbContextFactory, ChatServerConfiguration chatServerConfiguration, IConfiguration configuration)
     {
         _dbContextFactory = dbContextFactory;
 
-        // TODO: make ports configurable.
-        _clientListener = new TcpListener(IPAddress.Any, 11031);
+        _clientListener = new TcpListener(IPAddress.Any, chatServerConfiguration.ClientPort);
+        _serverListener = new TcpListener(IPAddress.Any, chatServerConfiguration.ServerPort);
+        _managerListener = new TcpListener(IPAddress.Any, chatServerConfiguration.ManagerPort);
+
         _clientProtocolRequestFactory = new ClientProtocolRequestFactory();
+        _serverProtocolRequestFactory = new ServerProtocolRequestFactory();
+        _managerProtocolRequestFactory = new ManagerProtocolRequestFactory();
 
         MatchmakingSettingsResponse = CreateMatchmakingSettingsResponse(configuration);
     }
@@ -27,6 +35,12 @@ public class ChatServer
     {
         _clientListener.Start();
         _clientListener.BeginAcceptSocket(AcceptClientSocketCallback, this);
+
+        _serverListener.Start();
+        _serverListener.BeginAcceptSocket(AcceptServerSocketCallback, this);
+
+        _managerListener.Start();
+        _managerListener.BeginAcceptSocket(AcceptManagerSocketCallback, this);
     }
 
     public void Stop()
@@ -51,6 +65,46 @@ public class ChatServer
         {
             // Prepare for another connection.
             clientListener.BeginAcceptSocket(AcceptClientSocketCallback, chatServer);
+        }
+    }
+
+    public static void AcceptServerSocketCallback(IAsyncResult result)
+    {
+        ChatServer chatServer = (result.AsyncState as ChatServer)!;
+
+        TcpListener serverListener = chatServer._serverListener;
+        Socket socket;
+        try
+        {
+            socket = serverListener.EndAcceptSocket(result);
+
+            ConnectedServer server = new(socket, chatServer._serverProtocolRequestFactory, chatServer._dbContextFactory);
+            server.Start();
+        }
+        finally
+        {
+            // Prepare for another connection.
+            serverListener.BeginAcceptSocket(AcceptServerSocketCallback, chatServer);
+        }
+    }
+
+    public static void AcceptManagerSocketCallback(IAsyncResult result)
+    {
+        ChatServer chatServer = (result.AsyncState as ChatServer)!;
+
+        TcpListener managerListener = chatServer._managerListener;
+        Socket socket;
+        try
+        {
+            socket = managerListener.EndAcceptSocket(result);
+
+            ConnectedManager manager = new(socket, chatServer._managerProtocolRequestFactory, chatServer._dbContextFactory);
+            manager.Start();
+        }
+        finally
+        {
+            // Prepare for another connection.
+            managerListener.BeginAcceptSocket(AcceptManagerSocketCallback, chatServer);
         }
     }
 

@@ -20,7 +20,7 @@ public class Program
         });
 
         // TODO: store in a configuration file.
-        ChatServerConfiguration chatServerConfiguration = new ChatServerConfiguration("localhost", 10031, 10032, 10033);
+        ChatServerConfiguration chatServerConfiguration = new ChatServerConfiguration("localhost", 11031, 11032, 11033);
         ConcurrentDictionary<string, SrpAuthSessionData> srpAuthSessions = new();
 
         builder.Services.AddSingleton<IReadOnlyDictionary<string, IClientRequestHandler>>(
@@ -47,6 +47,7 @@ public class Program
             }
         );
 
+        builder.Services.AddSingleton<ChatServerConfiguration>(chatServerConfiguration);
         builder.Services.AddSingleton<ChatServer>();
         builder.Services.AddControllers().AddApplicationPart(typeof(ClientRequesterController).Assembly);
 
