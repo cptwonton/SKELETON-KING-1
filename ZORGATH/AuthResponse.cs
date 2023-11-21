@@ -23,7 +23,7 @@ public class AuthResponse
         Email = accountDetails.Email;
         ClientIpAddress = clientIpAddress;
         Cookie = cookie;
-        AuthHash = ComputeAuthHash(accountDetails.AccountId, cookie, clientIpAddress);
+        AuthHash = ComputeAuthHash(accountDetails.AccountId, clientIpAddress, cookie);
         HostTime = hostTime;
         VestedThreshold = 5;
         ChatUrl = chatServerUrl;
@@ -53,9 +53,15 @@ public class AuthResponse
     /// <summary>
     ///   Helper function to compute the `authHash`.
     /// </summary>
-    private static string ComputeAuthHash(int accountId, string cookie, string ip)
+    private static string ComputeAuthHash(int accountId, string ip, string cookie)
     {
         string authHashComputeString = accountId + ip + cookie + _authHashMagic;
+        return Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(authHashComputeString))).ToLowerInvariant();
+    }
+
+    public static string ComputeAuthHash(string accountKey, string cookie)
+    {
+        string authHashComputeString = accountKey + cookie + _authHashMagic;
         return Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(authHashComputeString))).ToLowerInvariant();
     }
 

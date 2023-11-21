@@ -23,6 +23,11 @@ public class ChatServerResponse
     public const short ServerConnectionAccepted = 0x1500;
     public const short ServerConnectionRejected = 0x1501;
 
+    public const short ManagerConnectionAccepted = 0x1700;
+    public const short UpdateManagerOptions = 0x1703;
+
     public const short ConnectionAccepted = 0x1C00;
     public const short ConnectionRejected = 0x1C01;
+
+    public const short PingReceived = 0x2A01;
 }

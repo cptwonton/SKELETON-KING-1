@@ -33,6 +33,7 @@ public class Program
                 {"pre_auth", new PreAuthHandler(srpAuthSessions) },
                 {"show_simple_stats", new ShowSimpleStatsHandler() },
                 {"srpAuth", new SrpAuthHandler(srpAuthSessions, new(), chatServerUrl: chatServerConfiguration.Address, icbUrl: "kongor.online") },
+                {"server_list", new ServerListHandler() },
             }
         );
 
@@ -49,11 +50,14 @@ public class Program
 
         builder.Services.AddSingleton<ChatServerConfiguration>(chatServerConfiguration);
         builder.Services.AddSingleton<ChatServer>();
+        builder.Services.AddSingleton<ServerStatusChecker>();
         builder.Services.AddControllers().AddApplicationPart(typeof(ClientRequesterController).Assembly);
 
         var app = builder.Build();
         app.MapControllers();
         app.Services.GetRequiredService<ChatServer>().Start();
+        app.Services.GetRequiredService<ServerStatusChecker>().Start();
+
         app.Run();
     }
 }

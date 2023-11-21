@@ -57,13 +57,12 @@ public class NewSessionHandler : IServerRequestHandler
         string location = formData["location"];
         string name = formData["name"];
 
-        int serverId;
         string cookie = Guid.NewGuid().ToString("N");
-        int? existingGameServerId = await bountyContext.GameServers
+        int serverId = await bountyContext.GameServers
                 .Where(server => server.Account.AccountId == accountId && server.Address == address && server.Port == port && server.Location == location && server.Name == name)
                 .Select(gameServer => gameServer.GameServerId)
                 .FirstOrDefaultAsync();
-        if (existingGameServerId == null)
+        if (serverId == 0)
         {
             // Add new one.
             serverId = (await bountyContext.GameServers.MaxAsync(x => (int?)x.GameServerId) ?? 0) + 1;
@@ -85,7 +84,6 @@ public class NewSessionHandler : IServerRequestHandler
         else
         {
             // Update existing one.
-            serverId = existingGameServerId.Value;
             bountyContext.GameServers
                 .Where(gameServer => gameServer.GameServerId == serverId)
                 .ExecuteUpdate(s => s.SetProperty(b => b.Cookie, b => cookie).SetProperty(b => b.TimestampLastSession, b => DateTime.UtcNow));

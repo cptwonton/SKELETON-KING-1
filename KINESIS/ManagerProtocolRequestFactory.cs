@@ -14,6 +14,11 @@ public class ManagerProtocolRequestFactory : IProtocolRequestFactory<ConnectedMa
 
         return messageId switch
         {
+            ChatServerRequest.ConnectManager => Manager.ConnectManagerRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.DisconnectManager => Manager.DisconnectManagerRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.UpdateManagerStatus => Manager.UpdateManagerStatusRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.Ping => Manager.PingRequest.Decode(buffer, offset, out updatedOffset),
+
             // Unknown message.
             _ => null,
         };

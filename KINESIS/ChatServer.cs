@@ -11,9 +11,14 @@ public class ChatServer
     private readonly TcpListener _managerListener;
 
     public static readonly ConcurrentDictionary<int, ConnectedClient> ConnectedClientsByAccountId = new();
-    public static readonly ConcurrentDictionary<int, ConnectedServer> ConnectedServersByAccountId = new();
+    public static readonly ConcurrentDictionary<int, ConnectedServer> ConnectedServersByServerId = new();
+    public static readonly ConcurrentDictionary<int, ConnectedManager> ConnectedManagersByAccountId = new();
     public static readonly ConcurrentDictionary<int, Client.ChatChannel> ChatChannelsByChannelId = new();
     public static readonly ConcurrentDictionary<string, Client.ChatChannel> ChatChannelsByUpperCaseName = new();
+    public static readonly ConcurrentDictionary<string, ConcurrentDictionary<ConnectedServer,bool>> IdleServersByRegion = new();
+    public static readonly ConcurrentDictionary<int, ConcurrentDictionary<ConnectedServer, bool>> IdleServersByManager = new();
+    public static readonly ConcurrentDictionary<ConnectedServer, bool> ConnectedServers = new();
+    public static readonly ConcurrentDictionary<ConnectedManager, bool> ConnectedManagers = new();
 
     public static Matchmaking.MatchmakingSettingsResponse MatchmakingSettingsResponse = null!;
 
