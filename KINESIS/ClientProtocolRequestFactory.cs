@@ -29,6 +29,9 @@ public class ClientProtocolRequestFactory : IProtocolRequestFactory<ConnectedCli
             ChatServerRequest.NotifyJoiningGame => Client.NotifyJoiningGameRequest.Decode(buffer, offset, out updatedOffset),
             ChatServerRequest.NotifyJoinedGame => Client.NotifyJoinedGameRequest.Decode(buffer, offset, out updatedOffset),
             ChatServerRequest.NotifyLeftGame => Client.NotifyLeftGameRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.WhisperToPlayer => Client.WhisperRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.WhisperToBuddies => Client.WhisperBuddiesRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.WhisperToClanmates => Client.ClanWhisperRequest.Decode(buffer, offset, out updatedOffset),
 
             // Unknown message.
             _ => null,

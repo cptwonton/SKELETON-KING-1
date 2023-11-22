@@ -1,5 +1,6 @@
 ﻿namespace PUZZLEBOX;
 
+[Index(nameof(AccountId))]
 public class Friend
 {
     [Key]
@@ -12,6 +13,8 @@ public class Friend
     // Account we are friends with.
     [Required]
     public Account FriendAccount { get; set; } = null!;
+
+    public int FriendAccountId { get; set; }
 
     // Timestamp when the invite expires (null if friends).
     public DateTime? ExpirationDateTime { get; set; }

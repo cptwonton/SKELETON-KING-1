@@ -55,7 +55,7 @@ public class PreAuthHandler : IClientRequestHandler
                         /* allOtherGameDisconnects: */ 0),
 
                     // Clan information.
-                    account.Clan!.ClanId,
+                    account.ClanId,
                     account.Clan!.Name,
                     account.Clan!.Tag,
                     account.ClanTier,
@@ -65,7 +65,7 @@ public class PreAuthHandler : IClientRequestHandler
                     /* cloudAutoUpload: */ false,
 
                     // User-specific information.
-                    account.User.Id,
+                    account.UserId,
                     account.User.Email!,
                     account.User.GoldCoins,
                     account.User.SilverCoins,

@@ -103,7 +103,7 @@ public class PerformanceCounter : IDisposable
         }
 
         DateTime date = DateTime.UtcNow;
-        using BountyContext bountyContext = _serviceProvider != null ? _serviceProvider.GetRequiredService<BountyContext>() : _dbContextFactory!.CreateDbContext();
+        using BountyContext bountyContext = _serviceProvider != null ? (BountyContext)_serviceProvider.GetService(typeof(BountyContext))! : _dbContextFactory!.CreateDbContext();
         foreach (var countersByCategory in countersByCategoryAndSubcategory)
         {
             foreach (var counters in countersByCategory.Value)

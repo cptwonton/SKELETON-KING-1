@@ -11,7 +11,7 @@ public class RefreshMatchmakingStatsRequest : ProtocolRequest<ConnectedClient>
     public override void HandleRequest(IDbContextFactory<BountyContext> dbContextFactory, ConnectedClient connectedClient)
     {
         using var bountyContext = dbContextFactory.CreateDbContext();
-        RefreshMatchmakingStatsRequestResponse refreshMatchmakingStatsRequestResponse = bountyContext.Accounts
+        RefreshMatchmakingStatsRequestResponse? refreshMatchmakingStatsRequestResponse = bountyContext.Accounts
             .Where(account => account.AccountId == connectedClient.AccountId)
             .Select(account => new RefreshMatchmakingStatsRequestResponse(
                 /* rating: */ account.PlayerSeasonStatsRanked.Rating,
@@ -33,10 +33,13 @@ public class RefreshMatchmakingStatsRequest : ProtocolRequest<ConnectedClient>
                 /* eligibleForMatchmaking: */ 1,
                 /* seasonEnd: */ 1
             ))
-            .FirstOrDefault()!;
-        connectedClient.SendResponse(refreshMatchmakingStatsRequestResponse);
-
-        // The game doesn't always seem to request matchamking settings.
+            .FirstOrDefault();
+        if (refreshMatchmakingStatsRequestResponse != null)
+        {
+            connectedClient.SendResponse(refreshMatchmakingStatsRequestResponse);
+        }
+        
+        // The game doesn't always seem to request matchmaking settings.
         connectedClient.SendResponse(ChatServer.MatchmakingSettingsResponse);
     }
 }

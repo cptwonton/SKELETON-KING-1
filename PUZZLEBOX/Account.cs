@@ -23,10 +23,15 @@ public class Account
     public string Name { get; set; } = null!;
 
     [Required]
+    public string UserId { get; set; } = null!;
+
+    [Required]
     // This is a transition property, automatically initialized by EF. Never null.
     public ElementUser User { get; set; } = null!;
 
     public Clan? Clan { get; set; }
+
+    public int? ClanId { get; set; }
 
     public Clan.Tier ClanTier { get; set; }
 

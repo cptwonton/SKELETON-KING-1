@@ -3,10 +3,13 @@
 public class ChatServerRequest
 {
     public const short SendChatChannelMessage = 0x0003;
+    public const short WhisperToPlayer = 0x0008;
     public const short NotifyJoiningGame = 0x000F;
     public const short NotifyJoinedGame = 0x0010;
     public const short NotifyLeftGame = 0x0011;
+    public const short WhisperToClanmates = 0x0013;
     public const short JoinChatChannel = 0x001E;
+    public const short WhisperToBuddies = 0x0020;
     public const short LeaveChatChannel = 0x0022;
     public const short TrackPlayerAction = 0x00B9;
     public const short ConnectServer = 0x0500;

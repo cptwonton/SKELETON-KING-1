@@ -11,12 +11,12 @@ public class ConnectRequestData
     public readonly string SelectedChatNameColourCode;
     public readonly string SelectedAccountIconCode;
 
-    public ConnectRequestData(string accountName, string userId, int clanIdOrZero, string clanTagOrEmpty, ICollection<string> selectedUpgradeCodes)
+    public ConnectRequestData(string accountName, string userId, int? clanId, string? clanTag, ICollection<string> selectedUpgradeCodes)
     {
         AccountName = accountName;
         UserId = userId;
-        ClanIdOrZero = clanIdOrZero;
-        ClanTagOrEmpty = clanTagOrEmpty;
+        ClanIdOrZero = clanId ?? 0;
+        ClanTagOrEmpty = clanTag ?? string.Empty;
 
         string? selectedChatSymbolCode = selectedUpgradeCodes.FirstOrDefault(upgrade => upgrade.StartsWith("cs."));
         SelectedChatSymbolCode = selectedChatSymbolCode != null ? selectedChatSymbolCode.Substring(3) : "";
@@ -105,7 +105,7 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         return message;
     }
 
-    public override void HandleRequest(IDbContextFactory<BountyContext> dbContextFactory, ConnectedClient connectedClient)
+    public override async void HandleRequest(IDbContextFactory<BountyContext> dbContextFactory, ConnectedClient connectedClient)
     {
         int accountId = _accountId;
         string sessionCookie = _sessionCookie;
@@ -116,9 +116,9 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
             .Where(account => account.AccountId == accountId && account.Cookie == sessionCookie)
             .Select(account => new ConnectRequestData(
                     account.Name,
-                    account.User.Id,
-                    account.Clan == null ? 0 : account.Clan.ClanId,
-                    account.Clan == null ? "" : account.Clan.Tag,
+                    account.UserId,
+                    account.ClanId,
+                    account.Clan!.Tag,
                     account.SelectedUpgradeCodes))
             .FirstOrDefault();
         if (data == null)
@@ -142,7 +142,7 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         connectedClient.SendResponse(new ConnectionAcceptedResponse());
 
         // Disconnect all subaccounts, if any are online.
-        foreach (int otherAccountId in bountyContext.Accounts.Where(a => a.User.Id == data.UserId).Select(a => a.AccountId))
+        foreach (int otherAccountId in bountyContext.Accounts.Where(a => a.UserId == data.UserId).Select(a => a.AccountId))
         {
             if (ChatServer.ConnectedClientsByAccountId.TryRemove(otherAccountId, out var otherConnectedClient))
             {
@@ -152,8 +152,11 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
             }
         }
 
-        // TODO: include clan name if applicable.
         string displayedName = data.AccountName;
+        if (data.ClanTagOrEmpty != "")
+        {
+            displayedName = "["+data.ClanTagOrEmpty+"]" + data.AccountName;
+        }
 
         // TODO: pass correct flags.
         ChatClientFlags chatClientFlags = ChatClientFlags.IsPremium;
@@ -162,9 +165,12 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         int ascensionLevel = 0;
         string upperCaseClanName = "";
         ClientInformation clientInformation = new ClientInformation(
+                accountName: data.AccountName,
                 displayedName: displayedName,
                 chatClientFlags: chatClientFlags,
                 chatClientStatus: chatClientStatus,
+                chatMode: (ChatMode)_clientChatModeState,
+                chatModeDescription: "",
                 selectedChatSymbolCode: data.SelectedChatSymbolCode,
                 selectedChatNameColourCode: data.SelectedChatNameColourCode,
                 selectedAccountIconCode: data.SelectedAccountIconCode,
@@ -175,7 +181,8 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
                 matchId: 0,
                 clanIdOrZero: data.ClanIdOrZero,
                 clanTagOrEmpty: data.ClanTagOrEmpty,
-                friendsClanmatesAccountIds: new int[0]);
+                friendAccountIds: await bountyContext.Friends.Where(friend => friend.AccountId == accountId && friend.ExpirationDateTime == null).Select(friend => friend.FriendAccountId).ToArrayAsync(),
+                clanmateAccountIds: await bountyContext.Accounts.Where(account => account.ClanId == data.ClanIdOrZero && account.AccountId != accountId).Select(account => account.AccountId).ToArrayAsync());
 
         connectedClient.Initialize(_accountId, clientInformation);
     }

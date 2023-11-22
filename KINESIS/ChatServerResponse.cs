@@ -6,10 +6,15 @@ public class ChatServerResponse
     public const short FullChannelUpdate = 0x0004;
     public const short JoinedChatChannel = 0x0005;
     public const short LeftChatChannel = 0x0006;
+    public const short WhisperedToPlayer = 0x0008;
+    public const short WhisperFailed = 0x0009;
     public const short ClientStatusUpdated = 0x000C;
-
+    public const short WhisperedToClanmates = 0x0013;
+    public const short ClanWhisperFailed = 0x0014;
+    public const short WhisperedToBuddies = 0x0020;
+    public const short ChatModeAutoResponse = 0x0067;
     public const short PlayerCount = 0x0068;
-    
+
     public const short EnteredMatchmakingQueue = 0x0D01;
     public const short LeftMatchmakingQueue = 0x0D02;
     public const short MatchmakingGroupUpdated = 0x0D03;

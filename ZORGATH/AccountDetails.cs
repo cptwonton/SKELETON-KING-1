@@ -84,7 +84,7 @@ public class AccountDetails
 
     public async Task Load(BountyContext bountyContext)
     {
-        Identities = await bountyContext.Accounts.Where(account => account.User.Id == UserId).Select(account => new List<string>() { account.Name, account.AccountId.ToString() }).ToListAsync();
+        Identities = await bountyContext.Accounts.Where(account => account.UserId == UserId).Select(account => new List<string>() { account.Name, account.AccountId.ToString() }).ToListAsync();
         BuddyList = await bountyContext.Friends.Where(friend => friend.ExpirationDateTime == null && friend.AccountId == AccountId)
             .Select(friend => new BuddyListEntry(friend.FriendAccount.Name, friend.FriendAccount.AccountId, friend.FriendAccount.Clan!.Tag, friend.Group))
             .ToDictionaryAsync(
