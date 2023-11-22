@@ -1,11 +1,72 @@
 ﻿namespace PUZZLEBOX;
 
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 public class PlayerSeasonStats
 {
     public const int NumPlacementMatches = 6;
+
+    public void UpdateFrom(PlayerMatchResults playerMatchResults)
+    {
+        this.ConcedeVotes += playerMatchResults.concedevotes;
+        this.Buybacks += playerMatchResults.buybacks;
+        this.TimesDisconnected += playerMatchResults.discos;
+        this.TimesKicked += playerMatchResults.kicked;
+        this.HeroKills += playerMatchResults.herokills;
+        this.HeroDamage += playerMatchResults.herodmg;
+        this.HeroExp += playerMatchResults.heroexp;
+        this.HeroKillsGold += playerMatchResults.herokillsgold;
+        this.HeroAssists += playerMatchResults.heroassists;
+        this.Deaths += playerMatchResults.deaths;
+        this.GoldLost2Death += playerMatchResults.goldlost2death;
+        this.SecsDead += playerMatchResults.secs_dead;
+        this.TeamCreepKills += playerMatchResults.teamcreepkills;
+        this.TeamCreepDmg += playerMatchResults.teamcreepdmg;
+        this.TeamCreepExp += playerMatchResults.teamcreepexp;
+        this.TeamCreepGold += playerMatchResults.teamcreepgold;
+        this.NeutralCreepKills += playerMatchResults.neutralcreepkills;
+        this.NeutralCreepDmg += playerMatchResults.neutralcreepdmg;
+        this.NeutralCreepExp += playerMatchResults.neutralcreepexp;
+        this.NeutralCreepGold += playerMatchResults.neutralcreepgold;
+        this.BDmg += playerMatchResults.bdmg;
+        this.BDmgExp += playerMatchResults.bdmgexp;
+        this.Razed += playerMatchResults.razed;
+        this.BGold += playerMatchResults.bgold;
+        this.Denies += playerMatchResults.denies;
+        this.ExpDenies += playerMatchResults.exp_denied;
+        this.Gold += playerMatchResults.gold;
+        this.GoldSpent += playerMatchResults.gold_spent;
+        this.Exp += playerMatchResults.exp;
+        this.Actions += playerMatchResults.actions;
+        this.Secs += playerMatchResults.secs;
+        this.Consumables += playerMatchResults.consumables;
+        this.Wards += playerMatchResults.wards;
+        // this.Level
+        // this.LevelExp
+        // this.MinExp
+        // this.MaxExp
+        this.TimeEarningExp += playerMatchResults.time_earning_exp;
+        this.Bloodlust += playerMatchResults.bloodlust;
+        this.DoubleKill += playerMatchResults.doublekill;
+        this.TrippleKill += playerMatchResults.triplekill;
+        this.QuadKill += playerMatchResults.quadkill;
+        this.Annihilation += playerMatchResults.annihilation;
+        this.Ks3 += playerMatchResults.ks3;
+        this.Ks4 += playerMatchResults.ks4;
+        this.Ks5 += playerMatchResults.ks5;
+        this.Ks6 += playerMatchResults.ks6;
+        this.Ks7 += playerMatchResults.ks7;
+        this.Ks8 += playerMatchResults.ks8;
+        this.Ks9 += playerMatchResults.ks9;
+        this.Ks10 += playerMatchResults.ks10;
+        this.Ks15 += playerMatchResults.ks15;
+        this.Smackdown += playerMatchResults.smackdown;
+        this.Humiliation += playerMatchResults.humiliation;
+        this.Nemesis += playerMatchResults.nemesis;
+        this.Retribution += playerMatchResults.retribution;
+        // this.WinStreak
+    }
+
+    [Key]
+    public int AccountId { get; set; }
     public float Rating { get; set; } = 1500;
     public int Wins { get; set; }
     public int Losses { get; set; }
@@ -84,26 +145,22 @@ public class PlayerSeasonStats
     public string PlacementMatchesDetails { get; set; } = "";
 }
 
+//[PrimaryKey(nameof(AccountId))]
 public class PlayerSeasonStatsRanked : PlayerSeasonStats
 {
-    [Key]
-    public int AccountId { get; set; }
 }
 
+//[PrimaryKey(nameof(AccountId))]
 public class PlayerSeasonStatsRankedCasual : PlayerSeasonStats
 {
-    [Key]
-    public int AccountId { get; set; }
 }
 
+//[PrimaryKey(nameof(AccountId))]
 public class PlayerSeasonStatsPublic : PlayerSeasonStats
 {
-    [Key]
-    public int AccountId { get; set; }
 }
 
+//[PrimaryKey(nameof(AccountId))]
 public class PlayerSeasonStatsMidWars : PlayerSeasonStats
 {
-    [Key]
-    public int AccountId { get; set; }
 }

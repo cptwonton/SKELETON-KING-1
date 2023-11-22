@@ -32,6 +32,7 @@ public class PHP
         else if (type == typeof(float)) { serializer = new FloatSerializer(); }
         else if (type == typeof(long)) { serializer = new LongSerializer(); }
         else if (type == typeof(short)) { serializer = new ShortSerializer(); }
+        else if (type == typeof(DateTime)) { serializer = new DateTimeSerializer(); }
         else if (type.IsEnum)
         {
             serializer = new EnumSerializer();
@@ -284,6 +285,14 @@ public class PHP
         {
             IConvertible e = (IConvertible)data;
             AppendInt(sb, e.ToInt32(null));
+        }
+    }
+
+    private class DateTimeSerializer : ISerializer
+    {
+        public void Serialize(StringBuilder sb, object data)
+        {
+            AppendString(sb, data.ToString()!);
         }
     }
 

@@ -37,22 +37,21 @@ public class PreAuthHandler : IClientRequestHandler
                     account.AutoConnectChatChannels,
                     account.IgnoredList,
 
-                    // TODO: query stats too.
                     new AccountStats(
                         /* level: */ 0,
                         /* levelExp: */ 0,
-                        /* psr: */ 1500,
-                        /* normalRankedGamesMMR: */ 1500,
-                        /* casualModeMMR: */ 1500,
-                        /* publicGamesPlayed: */ 0,
-                        /* normalRankedGamesPlayed: */ 0,
-                        /* casualModeGamesPlayed: */ 0,
-                        /* midWarsGamesPlayed: */ 0,
+                        /* psr: */ account.PlayerSeasonStatsPublic.Rating,
+                        /* normalRankedGamesMMR: */ account.PlayerSeasonStatsRanked.Rating,
+                        /* casualModeMMR: */ account.PlayerSeasonStatsRankedCasual.Rating,
+                        /* publicGamesPlayed: */ account.PlayerSeasonStatsPublic.Wins + account.PlayerSeasonStatsRankedCasual.Losses,
+                        /* normalRankedGamesPlayed: */ account.PlayerSeasonStatsRanked.Wins + account.PlayerSeasonStatsRanked.Losses,
+                        /* casualModeGamesPlayed: */ account.PlayerSeasonStatsRankedCasual.Wins + account.PlayerSeasonStatsRankedCasual.Losses,
+                        /* midWarsGamesPlayed: */ account.PlayerSeasonStatsMidWars.Wins + account.PlayerSeasonStatsMidWars.Losses,
                         /* allOtherGamesPlayed: */ 0,
-                        /* publicGameDisconnects: */ 0,
-                        /* normalRankedGameDisconnects: */ 0,
-                        /* casualModeDisconnects: */ 0,
-                        /* midWarsTimesDisconnected: */ 0,
+                        /* publicGameDisconnects: */ account.PlayerSeasonStatsPublic.TimesDisconnected,
+                        /* normalRankedGameDisconnects: */ account.PlayerSeasonStatsRanked.TimesDisconnected,
+                        /* casualModeDisconnects: */ account.PlayerSeasonStatsRankedCasual.TimesDisconnected,
+                        /* midWarsTimesDisconnected: */ account.PlayerSeasonStatsMidWars.TimesDisconnected,
                         /* allOtherGameDisconnects: */ 0),
 
                     // Clan information.

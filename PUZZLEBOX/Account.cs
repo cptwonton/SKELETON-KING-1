@@ -63,4 +63,7 @@ public class Account
 
     [Required]
     public PlayerSeasonStatsMidWars PlayerSeasonStatsMidWars { get; set; } = null!;
+
+    [Required]
+    public int StatResetCount { get; set; }
 }

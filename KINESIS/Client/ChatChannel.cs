@@ -80,6 +80,13 @@ public class ChatChannel
                 return false;
             }
 
+            if (_users.Count == 0)
+            {
+                // Lazily initialize _id upon first user added to the channel.
+                _id = Interlocked.Increment(ref _lastChannelId);
+                ChatServer.ChatChannelsByChannelId[_id] = this;
+            }
+
             fullChannelUpdateResponse = new(
                 channelName: _name,
                 channelId: _id,
@@ -95,13 +102,6 @@ public class ChatChannel
             {
                 // Cannot add another user to this channel.
                 return false;
-            }
-
-            if (_users.Count == 0)
-            {
-                // Lazily initialize _id upon first user added to the channel.
-                _id = Interlocked.Increment(ref _lastChannelId);
-                ChatServer.ChatChannelsByChannelId[_id] = this;
             }
 
             _users.Add(newUser);

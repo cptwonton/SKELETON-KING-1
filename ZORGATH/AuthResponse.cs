@@ -383,7 +383,7 @@ public readonly struct IgnoredListEntry
 
 public readonly struct AccountStats
 {
-    public AccountStats(int level, float levelExp, int psr, float normalRankedGamesMMR, float casualModeMMR, int publicGamesPlayed, int normalRankedGamesPlayed, int casualModeGamesPlayed, int midWarsGamesPlayed, int allOtherGamesPlayed, int publicGameDisconnects, int normalRankedGameDisconnects, int casualModeDisconnects, int midWarsTimesDisconnected, int allOtherGameDisconnects)
+    public AccountStats(int level, float levelExp, float psr, float normalRankedGamesMMR, float casualModeMMR, int publicGamesPlayed, int normalRankedGamesPlayed, int casualModeGamesPlayed, int midWarsGamesPlayed, int allOtherGamesPlayed, int publicGameDisconnects, int normalRankedGameDisconnects, int casualModeDisconnects, int midWarsTimesDisconnected, int allOtherGameDisconnects)
     {
         Level = level;
         LevelExp = levelExp;
@@ -419,7 +419,7 @@ public readonly struct AccountStats
     ///     Public Games.
     /// </summary>
     [PhpProperty("acc_pub_skill")]
-    public readonly int PSR;
+    public readonly float PSR;
 
     /// <summary>
     ///     The user's MMR (match making rating) from stat recording

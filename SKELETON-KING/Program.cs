@@ -5,6 +5,7 @@ using KINESIS;
 using PUZZLEBOX;
 using System.Collections.Concurrent;
 using ZORGATH;
+using KINESIS.Server;
 
 public class Program
 {
@@ -42,11 +43,33 @@ public class Program
             new Dictionary<string, IServerRequestHandler>()
             {
                 // NOTE: Please keep this list alphabetized by the string literal in the key.
+                {"accept_key", new AcceptKeyHandler() },
+                {"c_conn", new ClientConnectionHandler() },
                 {"new_session", new NewSessionHandler(versionProvider, chatServerConfiguration.Address, chatServerConfiguration.ServerPort) },
                 {"replay_auth", new ReplayAuthHandler(chatServerConfiguration.Address, chatServerConfiguration.ManagerPort) },
                 {"set_online", new SetOnlineHandler() },
+                {"start_game", new StartGameHandler() },
             }
         );
+
+        EconomyConfiguration economy = new EconomyConfiguration(
+            signupRewards: new(goldCoins: 2500, silverCoins: 25000, plinkoTickets: 250),
+            eventRewards: new(postSignupBonus: new(goldCoins: 100, silverCoins: 1000, plinkoTickets: 10, matchesCount: 25)),
+            matchRewards: new(
+                solo: new(win: new(goldCoins: 20, silverCoins: 200, plinkoTickets: 10), loss: new(goldCoins: 10, silverCoins: 100, plinkoTickets: 5)),
+                twoPersonGroup: new(win: new(goldCoins: 24, silverCoins: 240, plinkoTickets: 14), loss: new(goldCoins: 12, silverCoins: 120, plinkoTickets: 7)),
+                threePersonGroup: new(win: new(goldCoins: 30, silverCoins: 300, plinkoTickets: 16), loss: new(goldCoins: 15, silverCoins: 150, plinkoTickets: 8)),
+                fourPersonGroup: new(win: new(goldCoins: 36, silverCoins: 360, plinkoTickets: 18), loss: new(goldCoins: 18, silverCoins: 180, plinkoTickets: 9)),
+                fivePersonGroup: new(win: new(goldCoins: 40, silverCoins: 400, plinkoTickets: 20), loss: new(goldCoins: 20, silverCoins: 200, plinkoTickets: 10))));
+        SubmitStatsHandler submitStatsHandler = new SubmitStatsHandler(economy);
+        builder.Services.AddSingleton<IReadOnlyDictionary<string, IStatsRequestHandler>>(
+           new Dictionary<string, IStatsRequestHandler>()
+           {
+                // NOTE: Please keep this list alphabetized by the string literal in the key.
+                {"resubmit_stats", new ResubmitStatsHandler(submitStatsHandler) },
+                {"submit_stats", submitStatsHandler },
+           }
+       );
 
         builder.Services.AddSingleton<ChatServerConfiguration>(chatServerConfiguration);
         builder.Services.AddSingleton<ChatServer>();
