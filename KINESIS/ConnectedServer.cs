@@ -5,10 +5,12 @@ public class ConnectedServer : IConnectedSubject
     private static Server.ServerState _unknownServerState = new Server.ServerState(0, "", 0, "", "", 0, 0, Server.ServerStatus.Unknown, "", "", "", 0, 0, null!);
     private Server.ServerState _serverState = _unknownServerState;
     private int _accountId = 0;
+    private int _lastHostedMatchId = 0;
     private bool _serverPortIsReachable = false;
     private readonly ChatServerConnection<ConnectedServer> _chatServerConnection;
 
     public Server.ServerState ServerState => _serverState;
+    public int LastHostedMatchId => _lastHostedMatchId;
 
     public ConnectedServer(Socket socket, IProtocolRequestFactory<ConnectedServer> requestFactory, IDbContextFactory<BountyContext> dbContextFactory)
     {

@@ -10,16 +10,14 @@ public class ClientInformation
     public readonly string SelectedAccountIconCode;
     public readonly int AscensionLevel;
     public readonly string UpperCaseClanName;
+    public readonly string ServerAddress;
+    public readonly string GameName;
+    public readonly int MatchId;
+    public readonly int ClanIdOrZero;
+    public readonly string ClanTagOrEmpty;
+    public readonly int[] FriendsClanmatesAccountIds;
 
-    public ClientInformation(
-        string displayedName,
-        Client.ChatClientFlags chatClientFlags,
-        Client.ChatClientStatus chatClientStatus,
-        string selectedChatSymbolCode,
-        string selectedChatNameColourCode,
-        string selectedAccountIconCode,
-        int ascensionLevel,
-        string upperCaseClanName)
+    public ClientInformation(string displayedName, Client.ChatClientFlags chatClientFlags, Client.ChatClientStatus chatClientStatus, string selectedChatSymbolCode, string selectedChatNameColourCode, string selectedAccountIconCode, int ascensionLevel, string upperCaseClanName, string serverAddress, string gameName, int matchId, int clanIdOrZero, string clanTagOrEmpty, int[] friendsClanmatesAccountIds)
     {
         DisplayedName = displayedName;
         ChatClientFlags = chatClientFlags;
@@ -29,7 +27,13 @@ public class ClientInformation
         SelectedAccountIconCode = selectedAccountIconCode;
         AscensionLevel = ascensionLevel;
         UpperCaseClanName = upperCaseClanName;
-    } 
+        ServerAddress = serverAddress;
+        GameName = gameName;
+        MatchId = matchId;
+        ClanIdOrZero = clanIdOrZero;
+        ClanTagOrEmpty = clanTagOrEmpty;
+        FriendsClanmatesAccountIds = friendsClanmatesAccountIds;
+    }
 }
 
 public class ConnectedClient : IConnectedSubject
@@ -130,6 +134,177 @@ public class ConnectedClient : IConnectedSubject
         if (response != null)
         {
             _chatServerConnection.EnqueueResponse(response);
+        }
+    }
+
+    public void NotifyJoiningGame(string serverAddress)
+    {
+        ClientInformation newClientInformation;
+        while (true)
+        {
+            ClientInformation oldClientInformation = _clientInformation;
+            newClientInformation = new ClientInformation(
+                displayedName: oldClientInformation.DisplayedName,
+                chatClientFlags: oldClientInformation.ChatClientFlags,
+                chatClientStatus: Client.ChatClientStatus.JoiningGame,
+                selectedChatSymbolCode: oldClientInformation.SelectedChatSymbolCode,
+                selectedChatNameColourCode: oldClientInformation.SelectedChatNameColourCode,
+                selectedAccountIconCode: oldClientInformation.SelectedAccountIconCode,
+                ascensionLevel: oldClientInformation.AscensionLevel,
+                upperCaseClanName: oldClientInformation.UpperCaseClanName,
+                serverAddress: serverAddress,
+                gameName: "",
+                matchId: 0,
+                clanIdOrZero: oldClientInformation.ClanIdOrZero,
+                clanTagOrEmpty: oldClientInformation.ClanTagOrEmpty,
+                friendsClanmatesAccountIds: oldClientInformation.FriendsClanmatesAccountIds);
+            if (Interlocked.CompareExchange(ref _clientInformation, newClientInformation, oldClientInformation) == oldClientInformation)
+            {
+                break;
+            }
+        }
+
+        HashSet<int> accountIds = new HashSet<int>(newClientInformation.FriendsClanmatesAccountIds);
+        foreach (Client.ChatChannel chatChannel in _chatChannels)
+        {
+            chatChannel.CollectAccountIds(accountIds);
+        }
+
+        Client.ClientStatusUpdatedResponse clientStatusUpdatedResponse = new Client.ClientStatusUpdatedResponse(
+            _accountId,
+            newClientInformation.ChatClientStatus,
+            newClientInformation.ChatClientFlags,
+            newClientInformation.ServerAddress,
+            newClientInformation.GameName,
+            newClientInformation.MatchId,
+            newClientInformation.ClanIdOrZero,
+            newClientInformation.ClanTagOrEmpty,
+            newClientInformation.SelectedChatSymbolCode,
+            newClientInformation.SelectedChatNameColourCode,
+            newClientInformation.SelectedAccountIconCode,
+            newClientInformation.AscensionLevel);
+
+        accountIds.Remove(_accountId);
+        foreach (int accountId in accountIds)
+        {
+            if (ChatServer.ConnectedClientsByAccountId.TryGetValue(accountId, out var friend))
+            {
+                friend.SendResponse(clientStatusUpdatedResponse);
+            }
+        }
+    }
+
+    public void NotifyJoinedGame(string gameName, int matchId)
+    {
+        ClientInformation newClientInformation;
+        while (true)
+        {
+            ClientInformation oldClientInformation = _clientInformation;
+            newClientInformation = new ClientInformation(
+                displayedName: oldClientInformation.DisplayedName,
+                chatClientFlags: oldClientInformation.ChatClientFlags,
+                chatClientStatus: Client.ChatClientStatus.InGame,
+                selectedChatSymbolCode: oldClientInformation.SelectedChatSymbolCode,
+                selectedChatNameColourCode: oldClientInformation.SelectedChatNameColourCode,
+                selectedAccountIconCode: oldClientInformation.SelectedAccountIconCode,
+                ascensionLevel: oldClientInformation.AscensionLevel,
+                upperCaseClanName: oldClientInformation.UpperCaseClanName,
+                serverAddress: oldClientInformation.ServerAddress,
+                gameName: gameName,
+                matchId: matchId,
+                clanIdOrZero: oldClientInformation.ClanIdOrZero,
+                clanTagOrEmpty: oldClientInformation.ClanTagOrEmpty,
+                friendsClanmatesAccountIds: oldClientInformation.FriendsClanmatesAccountIds);
+            if (Interlocked.CompareExchange(ref _clientInformation, newClientInformation, oldClientInformation) == oldClientInformation)
+            {
+                break;
+            }
+        }
+
+        HashSet<int> accountIds = new HashSet<int>(newClientInformation.FriendsClanmatesAccountIds);
+        foreach (Client.ChatChannel chatChannel in _chatChannels)
+        {
+            chatChannel.CollectAccountIds(accountIds);
+        }
+
+        Client.ClientStatusUpdatedResponse clientStatusUpdatedResponse = new Client.ClientStatusUpdatedResponse(
+            _accountId,
+            newClientInformation.ChatClientStatus,
+            newClientInformation.ChatClientFlags,
+            newClientInformation.ServerAddress,
+            newClientInformation.GameName,
+            newClientInformation.MatchId,
+            newClientInformation.ClanIdOrZero,
+            newClientInformation.ClanTagOrEmpty,
+            newClientInformation.SelectedChatSymbolCode,
+            newClientInformation.SelectedChatNameColourCode,
+            newClientInformation.SelectedAccountIconCode,
+            newClientInformation.AscensionLevel);
+
+        accountIds.Remove(_accountId);
+        foreach (int accountId in accountIds)
+        {
+            if (ChatServer.ConnectedClientsByAccountId.TryGetValue(accountId, out var friend))
+            {
+                friend.SendResponse(clientStatusUpdatedResponse);
+            }
+        }
+    }
+
+    public void NotifyLeftGame()
+    {
+        ClientInformation newClientInformation;
+        while (true)
+        {
+            ClientInformation oldClientInformation = _clientInformation;
+            newClientInformation = new ClientInformation(
+                displayedName: oldClientInformation.DisplayedName,
+                chatClientFlags: oldClientInformation.ChatClientFlags,
+                chatClientStatus: Client.ChatClientStatus.Connected,
+                selectedChatSymbolCode: oldClientInformation.SelectedChatSymbolCode,
+                selectedChatNameColourCode: oldClientInformation.SelectedChatNameColourCode,
+                selectedAccountIconCode: oldClientInformation.SelectedAccountIconCode,
+                ascensionLevel: oldClientInformation.AscensionLevel,
+                upperCaseClanName: oldClientInformation.UpperCaseClanName,
+                serverAddress: oldClientInformation.ServerAddress,
+                gameName: oldClientInformation.GameName,
+                matchId: oldClientInformation.MatchId,
+                clanIdOrZero: oldClientInformation.ClanIdOrZero,
+                clanTagOrEmpty: oldClientInformation.ClanTagOrEmpty,
+                friendsClanmatesAccountIds: oldClientInformation.FriendsClanmatesAccountIds);
+            if (Interlocked.CompareExchange(ref _clientInformation, newClientInformation, oldClientInformation) == oldClientInformation)
+            {
+                break;
+            }
+        }
+
+        HashSet<int> accountIds = new HashSet<int>(newClientInformation.FriendsClanmatesAccountIds);
+        foreach (Client.ChatChannel chatChannel in _chatChannels)
+        {
+            chatChannel.CollectAccountIds(accountIds);
+        }
+
+        Client.ClientStatusUpdatedResponse clientStatusUpdatedResponse = new Client.ClientStatusUpdatedResponse(
+            _accountId,
+            newClientInformation.ChatClientStatus,
+            newClientInformation.ChatClientFlags,
+            newClientInformation.ServerAddress,
+            newClientInformation.GameName,
+            newClientInformation.MatchId,
+            newClientInformation.ClanIdOrZero,
+            newClientInformation.ClanTagOrEmpty,
+            newClientInformation.SelectedChatSymbolCode,
+            newClientInformation.SelectedChatNameColourCode,
+            newClientInformation.SelectedAccountIconCode,
+            newClientInformation.AscensionLevel);
+
+        accountIds.Remove(_accountId);
+        foreach (int accountId in accountIds)
+        {
+            if (ChatServer.ConnectedClientsByAccountId.TryGetValue(accountId, out var friend))
+            {
+                friend.SendResponse(clientStatusUpdatedResponse);
+            }
         }
     }
 

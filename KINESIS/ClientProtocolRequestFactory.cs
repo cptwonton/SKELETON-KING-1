@@ -26,7 +26,10 @@ public class ClientProtocolRequestFactory : IProtocolRequestFactory<ConnectedCli
             ChatServerRequest.EnterMatchmakingQueue => Matchmaking.EnterMatchmakingQueueRequest.Decode(buffer, offset, out updatedOffset),
             ChatServerRequest.RefreshMatchmakingSettings => Matchmaking.RefreshMatchmakingSettingsRequest.Decode(buffer, offset, out updatedOffset),
             ChatServerRequest.RefreshMatchmakingStats => Matchmaking.RefreshMatchmakingStatsRequest.Decode(buffer, offset, out updatedOffset),
-            
+            ChatServerRequest.NotifyJoiningGame => Client.NotifyJoiningGameRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.NotifyJoinedGame => Client.NotifyJoinedGameRequest.Decode(buffer, offset, out updatedOffset),
+            ChatServerRequest.NotifyLeftGame => Client.NotifyLeftGameRequest.Decode(buffer, offset, out updatedOffset),
+
             // Unknown message.
             _ => null,
         };

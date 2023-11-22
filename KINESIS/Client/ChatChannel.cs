@@ -123,6 +123,17 @@ public class ChatChannel
         return true;
     }
 
+    public void CollectAccountIds(HashSet<int> accountIds)
+    {
+        lock (this)
+        {
+            foreach (var user in _users)
+            {
+                accountIds.Add(user.AccountId);
+            }
+        }   
+    }
+
     public void Remove(ConnectedClient client, bool notifyClient)
     {
         ChatChannelUser[] remainingUsers;

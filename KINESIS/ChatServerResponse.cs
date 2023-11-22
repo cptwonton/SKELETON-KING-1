@@ -6,9 +6,10 @@ public class ChatServerResponse
     public const short FullChannelUpdate = 0x0004;
     public const short JoinedChatChannel = 0x0005;
     public const short LeftChatChannel = 0x0006;
+    public const short ClientStatusUpdated = 0x000C;
 
     public const short PlayerCount = 0x0068;
-
+    
     public const short EnteredMatchmakingQueue = 0x0D01;
     public const short LeftMatchmakingQueue = 0x0D02;
     public const short MatchmakingGroupUpdated = 0x0D03;

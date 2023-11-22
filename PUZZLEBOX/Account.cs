@@ -32,10 +32,8 @@ public class Account
 
     public CloudStorage? CloudStorage { get; set; }
 
-    [Required]
     public DateTime TimestampCreated { get; set; }
 
-    [Required]
     public DateTime LastActivity { get; set; }
 
     public AccountType AccountType { get; set; } = AccountType.Legacy;
@@ -64,6 +62,7 @@ public class Account
     [Required]
     public PlayerSeasonStatsMidWars PlayerSeasonStatsMidWars { get; set; } = null!;
 
-    [Required]
     public int StatResetCount { get; set; }
+
+    public int LastPlayedMatchId { get; set; }
 }

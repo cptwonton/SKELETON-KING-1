@@ -1,6 +1,33 @@
 ﻿namespace KINESIS.Client;
 
-public record ConnectRequestData(string AccountName, string UserId);
+
+public class ConnectRequestData
+{
+    public readonly string AccountName;
+    public readonly string UserId;
+    public readonly int ClanIdOrZero;
+    public readonly string ClanTagOrEmpty;
+    public readonly string SelectedChatSymbolCode;
+    public readonly string SelectedChatNameColourCode;
+    public readonly string SelectedAccountIconCode;
+
+    public ConnectRequestData(string accountName, string userId, int clanIdOrZero, string clanTagOrEmpty, ICollection<string> selectedUpgradeCodes)
+    {
+        AccountName = accountName;
+        UserId = userId;
+        ClanIdOrZero = clanIdOrZero;
+        ClanTagOrEmpty = clanTagOrEmpty;
+
+        string? selectedChatSymbolCode = selectedUpgradeCodes.FirstOrDefault(upgrade => upgrade.StartsWith("cs."));
+        SelectedChatSymbolCode = selectedChatSymbolCode != null ? selectedChatSymbolCode.Substring(3) : "";
+
+        string? selectedChatNameColourCode = selectedUpgradeCodes.FirstOrDefault(upgrade => upgrade.StartsWith("cc."));
+        SelectedChatNameColourCode = selectedChatNameColourCode != null ? selectedChatNameColourCode.Substring(3) : "white";
+
+        string? selectedAccountIconCode = selectedUpgradeCodes.FirstOrDefault(upgrade => upgrade.StartsWith("ai."));
+        SelectedAccountIconCode = selectedAccountIconCode != null ? selectedAccountIconCode.Substring(3) : "Default Icon";
+    }
+}
 
 public class ConnectRequest : ProtocolRequest<ConnectedClient>
 {
@@ -87,7 +114,12 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
 
         ConnectRequestData? data = bountyContext.Accounts
             .Where(account => account.AccountId == accountId && account.Cookie == sessionCookie)
-            .Select(account => new ConnectRequestData(account.Name, account.User.Id))
+            .Select(account => new ConnectRequestData(
+                    account.Name,
+                    account.User.Id,
+                    account.Clan == null ? 0 : account.Clan.ClanId,
+                    account.Clan == null ? "" : account.Clan.Tag,
+                    account.SelectedUpgradeCodes))
             .FirstOrDefault();
         if (data == null)
         {
@@ -127,22 +159,24 @@ public class ConnectRequest : ProtocolRequest<ConnectedClient>
         ChatClientFlags chatClientFlags = ChatClientFlags.IsPremium;
         ChatClientStatus chatClientStatus = ChatClientStatus.Connected;
 
-        // TODO: lookup correct chat symbol/name color/account icon.
-        string selectedChatSymbolCode = "";
-        string selectedChatNameColourCode = "cc.white";
-        string selectedAccountIconCode = "ai.Default Icon";
-
         int ascensionLevel = 0;
         string upperCaseClanName = "";
-        ClientInformation clientInformation = new(
-            displayedName,
-            chatClientFlags,
-            chatClientStatus,
-            selectedChatSymbolCode,
-            selectedChatNameColourCode,
-            selectedAccountIconCode,
-            ascensionLevel,
-            upperCaseClanName);
+        ClientInformation clientInformation = new ClientInformation(
+                displayedName: displayedName,
+                chatClientFlags: chatClientFlags,
+                chatClientStatus: chatClientStatus,
+                selectedChatSymbolCode: data.SelectedChatSymbolCode,
+                selectedChatNameColourCode: data.SelectedChatNameColourCode,
+                selectedAccountIconCode: data.SelectedAccountIconCode,
+                ascensionLevel: ascensionLevel,
+                upperCaseClanName: upperCaseClanName,
+                serverAddress: "",
+                gameName: "",
+                matchId: 0,
+                clanIdOrZero: data.ClanIdOrZero,
+                clanTagOrEmpty: data.ClanTagOrEmpty,
+                friendsClanmatesAccountIds: new int[0]);
+
         connectedClient.Initialize(_accountId, clientInformation);
     }
 }
