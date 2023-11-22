@@ -243,6 +243,10 @@ public class ChatServerConnection<T> where T : IConnectedSubject
                 throw new Exception(string.Format("Incorrect number of bytes read for message: {0}", BitConverter.ToInt16(buffer, messageStart)));
             }
 
+            using PerformanceCounter performanceCounter = new PerformanceCounter(_dbContextFactory);
+            performanceCounter.Category = "ChatServer";
+            performanceCounter.Subcategory = message.GetType().Name;
+
             message.HandleRequest(_dbContextFactory, _subject);
         }
 

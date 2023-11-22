@@ -20,6 +20,8 @@ public class BountyContext : IdentityDbContext<ElementUser>
 
     public DbSet<GameServer> GameServers { get; set; } = null!;
 
+    public DbSet<PerformanceEntry> PerformanceEntries { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

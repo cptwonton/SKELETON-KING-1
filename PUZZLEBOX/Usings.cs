@@ -10,6 +10,8 @@ global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 #endregion
 
 #region System Using Directives
+global using System.Collections.Concurrent;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Diagnostics;
 #endregion

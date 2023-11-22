@@ -37,6 +37,9 @@ public class ClientRequesterController : ControllerBase
 
         if (_clientRequestHandlers.TryGetValue(functionName, out var requestHandler))
         {
+            using PerformanceCounter performanceCounter = new PerformanceCounter(HttpContext.RequestServices);
+            performanceCounter.Category = "ClientRequesterController";
+            performanceCounter.Subcategory = functionName;
             return await requestHandler.HandleRequest(ControllerContext, formData);
         }
 

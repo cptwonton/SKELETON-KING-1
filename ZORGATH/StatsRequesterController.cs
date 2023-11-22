@@ -26,6 +26,11 @@ public class StatsRequesterController : ControllerBase
         if (_statsRequestHandlers.TryGetValue(functionName, out var requestHandler))
         {
             using BountyContext bountyContext = HttpContext.RequestServices.GetRequiredService<BountyContext>();
+
+            using PerformanceCounter performanceCounter = new PerformanceCounter(HttpContext.RequestServices);
+            performanceCounter.Category = "StatsRequesterController";
+            performanceCounter.Subcategory = functionName;
+
             return await requestHandler.HandleRequest(ControllerContext, bountyContext, stats);
         }
 
