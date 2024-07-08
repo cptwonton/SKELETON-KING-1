@@ -33,6 +33,7 @@ public class Program
                  {"get_match_stats", new GetMatchStatsHandler(replayServerUrl: "http://api.kongor.online") },
                  {"get_player_award_summ", new GetPlayerAwardSummHandler() },
                  {"get_seasons", new GetSeasonsHandler() },
+                 {"logout", new LogoutHandler() },
                  {"match_history_overview", new MatchHistoryOverviewHandler() },
                  {"pre_auth", new PreAuthHandler(srpAuthSessions) },
                  {"server_list", new ServerListHandler() },
