@@ -25,7 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EBULA\EBULA.csproj" />
     <ProjectReference Include="..\KINESIS\KINESIS.csproj" />
+    <ProjectReference Include="..\PUZZLEBOX\PUZZLEBOX.csproj" />
     <ProjectReference Include="..\ZORGATH\ZORGATH.csproj" />
   </ItemGroup>
 

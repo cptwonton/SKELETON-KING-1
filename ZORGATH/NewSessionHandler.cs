@@ -1,6 +1,6 @@
 ﻿namespace ZORGATH;
 
-internal record NewSessionAuthData(int AccountId, AccountType accountType);
+internal record NewSessionAuthData(int AccountId, AccountType AccountType);
 
 public class NewSessionHandler : IServerRequestHandler
 {

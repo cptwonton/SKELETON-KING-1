@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace ZORGATH;
+﻿namespace ZORGATH;
 
 /// <summary>
 /// Custom PHP serialization library that focuses on performance while fixing some of the issues that PhpSerializerNET has:

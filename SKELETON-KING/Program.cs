@@ -1,6 +1,7 @@
 namespace SKELETON_KING;
 
 using Microsoft.EntityFrameworkCore;
+using EBULA;
 using KINESIS;
 using PUZZLEBOX;
 using System.Collections.Concurrent;
@@ -28,13 +29,16 @@ public class Program
             new Dictionary<string, IClientRequestHandler>()
             {
                 // NOTE: Please keep this list alphabetized by the string literal in the key.
-                {"autocompleteNicks", new AutoCompleteNicksHandler() },
-                {"get_match_stats", new GetMatchStatsHandler(replayServerUrl: "http://api.kongor.online") },
-                {"match_history_overview", new MatchHistoryOverviewHandler() },
-                {"pre_auth", new PreAuthHandler(srpAuthSessions) },
-                {"show_simple_stats", new ShowSimpleStatsHandler() },
-                {"srpAuth", new SrpAuthHandler(srpAuthSessions, new(), chatServerUrl: chatServerConfiguration.Address, icbUrl: "kongor.online") },
-                {"server_list", new ServerListHandler() },
+                 {"autocompleteNicks", new AutoCompleteNicksHandler() },
+                 {"get_match_stats", new GetMatchStatsHandler(replayServerUrl: "http://api.kongor.online") },
+                 {"get_player_award_summ", new GetPlayerAwardSummHandler() },
+                 {"get_seasons", new GetSeasonsHandler() },
+                 {"match_history_overview", new MatchHistoryOverviewHandler() },
+                 {"pre_auth", new PreAuthHandler(srpAuthSessions) },
+                 {"server_list", new ServerListHandler() },
+                 {"show_simple_stats", new ShowSimpleStatsHandler() },
+                 {"show_stats", new ShowStatsHandler() },
+                 {"srpAuth", new SrpAuthHandler(srpAuthSessions, new(), chatServerUrl: chatServerConfiguration.Address, icbUrl: "kongor.online") },
             }
         );
 

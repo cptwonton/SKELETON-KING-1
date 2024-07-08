@@ -1,5 +1,7 @@
 ﻿namespace ZORGATH;
 
+using EBULA;
+
 [TestClass]
 public class ClientRequesterControllerTest
 {
