@@ -1,4 +1,9 @@
-﻿namespace ZORGATH;
+﻿namespace EBULA;
+
+using ZORGATH;
+using PUZZLEBOX;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 [ApiController]
 [Route("stats_requester.php")]

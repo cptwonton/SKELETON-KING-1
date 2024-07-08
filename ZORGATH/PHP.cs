@@ -8,7 +8,7 @@
 public class PHP
 {
     // Cache of serializer metadata, organized by type.
-    private static readonly ConcurrentDictionary<Type, ISerializer> _serializersByType = new();
+    private static readonly ConcurrentDictionary<Type, ISerializer> SerializersByType = new();
 
     private static ISerializer GetSerializerByType(Type type)
     {
@@ -18,7 +18,7 @@ public class PHP
             type = Nullable.GetUnderlyingType(type)!;
         }
 
-        if (_serializersByType.TryGetValue(type, out var result)) return result;
+        if (SerializersByType.TryGetValue(type, out var result)) return result;
 
         // Create and cache serializer for the type.
         ISerializer serializer;
@@ -154,7 +154,7 @@ public class PHP
             serializer = new ObjectSerializer(properties);
         }
 
-        _serializersByType.TryAdd(type, serializer);
+        SerializersByType.TryAdd(type, serializer);
         return serializer;
     }
 
@@ -649,14 +649,14 @@ public class PHP
 
     private class ObjectSerializer : ISerializer
     {
-        private readonly List<Property> Properties;
+        private readonly List<Property> _properties;
 
-        public ObjectSerializer(List<Property> properties) => Properties = properties;
+        public ObjectSerializer(List<Property> properties) => _properties = properties;
 
         public void Serialize(StringBuilder sb, object data)
         {
             int numNonNullProperties = 0;
-            foreach (Property property in Properties)
+            foreach (Property property in _properties)
             {
                 var propertyInfo = property.PropertyInfo;
                 object? value = propertyInfo != null ? propertyInfo.GetValue(data) : property.FieldInfo!.GetValue(data);
@@ -667,7 +667,7 @@ public class PHP
             sb.Append(numNonNullProperties);
             sb.Append(":{");
 
-            foreach (Property property in Properties)
+            foreach (Property property in _properties)
             {
                 var propertyInfo = property.PropertyInfo;
                 object? value = propertyInfo != null ? propertyInfo.GetValue(data) : property.FieldInfo!.GetValue(data);
