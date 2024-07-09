@@ -1,14 +1,13 @@
-namespace ZORGATH;
+﻿namespace ZORGATH;
 
-
-public class AutoCompleteNicksHandler : IClientRequestHandler
+public class AutoCompleteNicksHandler2 : IClientRequestHandler
 {
     public async Task<IActionResult> HandleRequest(ControllerContext controllerContext, Dictionary<string, string> formData)
     {
         string pattern = formData["nickname"];
         using BountyContext bountyContext = controllerContext.HttpContext.RequestServices.GetRequiredService<BountyContext>();
         List<string> matchingAccountNames = await bountyContext.Accounts
-            .Where(account => account.Name.Contains(pattern))
+            .Where(account => account.Name.StartsWith(pattern))
             .Select(account => account.Name)
             .OrderBy(accountName => accountName)
             .Take(40)
