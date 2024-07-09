@@ -1,6 +1,6 @@
 ﻿namespace ZORGATH;
 
-public class LogoutHandler : IClientRequestHandler
+public class LogoutHandler3 : IClientRequestHandler
 {
     public async Task<IActionResult> HandleRequest(ControllerContext controllerContext, Dictionary<string, string> formData)
     {
@@ -9,7 +9,12 @@ public class LogoutHandler : IClientRequestHandler
             if (cookie != "" && cookie != null)
             {
                 using BountyContext bountyContext = controllerContext.HttpContext.RequestServices.GetRequiredService<BountyContext>();
-                await bountyContext.Accounts.Where(a => a.Cookie == cookie).ExecuteUpdateAsync(s => s.SetProperty(prop => prop.Cookie, value => null));
+                Account? account = await bountyContext.Accounts.Where(a => a.Cookie == cookie).FirstOrDefaultAsync();
+                if (account != null)
+                {
+                    account.Cookie = null;
+                    await bountyContext.SaveChangesAsync();
+                }
             }
         }
 
