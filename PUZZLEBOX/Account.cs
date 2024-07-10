@@ -13,6 +13,11 @@ public class Account
         IgnoredList = ignoredList ?? Array.Empty<string>();
         SelectedUpgradeCodes = selectedUpgradeCodes ?? Array.Empty<string>();
         AutoConnectChatChannels = autoConnectChatChannels ?? Array.Empty<string>();
+
+        PlayerSeasonStatsMidWars = new();
+        PlayerSeasonStatsPublic = new();
+        PlayerSeasonStatsRanked = new();
+        PlayerSeasonStatsRankedCasual = new();
     }
 
     [Key]
