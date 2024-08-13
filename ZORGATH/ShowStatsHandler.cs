@@ -1,4 +1,8 @@
-﻿using Humanizer;
+﻿using System.Security.Principal;
+
+using Humanizer;
+
+using PUZZLEBOX;
 
 namespace ZORGATH;
 
@@ -221,7 +225,7 @@ public class ShowStatsHandler : IClientRequestHandler
     }
 
     // This is mostly a stub.
-    private static string GetMastery(int accountId, string accountName, string? clanTag, string? clanName, DateTime lastActivity, DateTime timestampCreated, ICollection<string> selectedUpgrades)
+    private static string GetMastery(int accountId, string accountName, string? clanTag, string? clanName, DateTime lastActivity, DateTime accountCreated, ICollection<string> selectedUpgrades)
     {
         Dictionary<string, object> response = new();
 
@@ -229,8 +233,8 @@ public class ShowStatsHandler : IClientRequestHandler
         response["nickname"] = GetAccountNameWithClanTag(accountName, clanTag);
         if (clanName != null) response["name"] = clanName;
 
-        response["last_activity"] = lastActivity.ToShortDateString() + " (" + lastActivity.Humanize() + ")";
-        response["create_date"] = timestampCreated.ToShortDateString() + " (" + timestampCreated.Humanize() + ")";
+        response["last_activity"] = $"{lastActivity.ToShortDateString()} ({lastActivity.Humanize()})";
+        response["create_date"] = $"{accountCreated.ToShortDateString()} ({accountCreated.Humanize()})";
         response["selected_upgrades"] = selectedUpgrades;
 
         return PHP.Serialize(response);
@@ -458,8 +462,8 @@ public class ShowStatsHandler : IClientRequestHandler
         response["current_level"] = numberOfPlacementMatchesPlayed < PlayerSeasonStats.NumPlacementMatches ? 0 : ChampionsOfNewerthRanks.RankForMmr(rating);
         response["level_percent"] = ChampionsOfNewerthRanks.PercentUntilNextRank(rating);
 
-        response["last_activity"] = lastActivity.ToShortDateString() + " (" + lastActivity.Humanize() + ")";
-        response["create_date"] = accountCreated.ToShortDateString() + " (" + accountCreated.Humanize() + ")";
+        response["last_activity"] = $"{lastActivity.ToShortDateString()} ({lastActivity.Humanize()})";
+        response["create_date"] = $"{accountCreated.ToShortDateString()} ({accountCreated.Humanize()})";
         response["highest_level_current"] = 0; // highest rank - we don't keep that information atm.
         response["season_id"] = 22;
 

@@ -108,7 +108,7 @@ internal class ServerForJoinListResponse
 {
     public ServerForJoinListResponse()
     {
-        int GAME_PHASE_LOBBY = 1;
+        int gamePhaseLobby = 1;
         // Only add servers that we believe are joinable. These servers are either currently loading resources for a
         // game that will soon start, or the game started but is currently in a lobby phase where anyone can join.
         // Normally, we would exclude servers with a Loading status, but while Loading status is dispatched
@@ -118,7 +118,7 @@ internal class ServerForJoinListResponse
         {
             var connectedServer = kvp.Key;
             var serverState = connectedServer.ServerState;
-            if (serverState.Status == KINESIS.Server.ServerStatus.Loading || (serverState.Status == KINESIS.Server.ServerStatus.Active && serverState.GamePhase == GAME_PHASE_LOBBY))
+            if (serverState.Status == KINESIS.Server.ServerStatus.Loading || (serverState.Status == KINESIS.Server.ServerStatus.Active && serverState.GamePhase == gamePhaseLobby))
             {
                 Servers.Add(new ServerInfo(serverState.ServerId, serverState.Address, serverState.Port, serverState.Location));
             }
