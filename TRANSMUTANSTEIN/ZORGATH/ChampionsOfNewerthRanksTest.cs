@@ -66,9 +66,9 @@ public class ChampionsOfNewerthRanksTest
     [DataRow(1922, ChampionsOfNewerthRank.LegendaryOne)]
     [DataRow(1950, ChampionsOfNewerthRank.Immortal)]
     [DataRow(2000, ChampionsOfNewerthRank.Immortal)]
-    public void TestRankForMmr(double mmr, int expectedRank)
+    public void TestRankForMmr(double mmr, ChampionsOfNewerthRank expectedRank)
     {
-        int rank = ChampionsOfNewerthRanks.RankForMmr(mmr);
+        ChampionsOfNewerthRank rank = (ChampionsOfNewerthRank) ChampionsOfNewerthRanks.RankForMmr(mmr);
         Assert.AreEqual(expectedRank, rank);
     }
 

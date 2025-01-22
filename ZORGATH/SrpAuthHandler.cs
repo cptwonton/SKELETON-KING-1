@@ -42,7 +42,7 @@ public class SrpAuthHandler : IClientRequestHandler
             .Where(account => account.AccountId == accountDetails.AccountId)
             .ExecuteUpdateAsync(update => update.SetProperty(account => account.Cookie, cookie));
 
-        string clientIpAddress = controllerContext.HttpContext.Connection.RemoteIpAddress.ToString();
+        string clientIpAddress = controllerContext.HttpContext.Connection.RemoteIpAddress!.ToString();
         long hostTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         SrpAuthResponse response = new(accountDetails, cookie, clientIpAddress, hostTime, _chatServerUrl, _icbUrl, proof, _secInfo);

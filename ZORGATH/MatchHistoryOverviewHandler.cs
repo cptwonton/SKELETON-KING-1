@@ -70,9 +70,26 @@ public class MatchHistoryOverviewHandler : IClientRequestHandler
         string nicknameSuffix = $"]{nickname}";
 
         // Get the list of comma-separated stats.
-        List<string> playerMatchResultsList = await bountyContext.PlayerMatchResults
+        var results = await bountyContext.PlayerMatchResults
             .Where(results => recentMatchIds.Contains(results.match_id) && (results.nickname == nickname || results.nickname.EndsWith(nicknameSuffix)))
             .OrderByDescending(results => results.match_id)
+            .Select(results => new
+            {
+                results.match_id,
+                results.wins,
+                results.team,
+                results.herokills,
+                results.deaths,
+                results.heroassists,
+                results.hero_id,
+                results.secs,
+                results.map,
+                results.mdt,
+                results.cli_name
+            })
+            .ToListAsync();
+
+        List<string> playerMatchResultsList = results
             .Select(results => string.Join(',',
                 results.match_id,
                 results.wins,
@@ -85,7 +102,7 @@ public class MatchHistoryOverviewHandler : IClientRequestHandler
                 results.map,
                 results.mdt,
                 results.cli_name))
-            .ToListAsync();
+            .ToList();
 
         // Turn it into a Dictionary with keys ranging from m0 to m99.
         Dictionary<string, string> matchHistoryOverview = new();
