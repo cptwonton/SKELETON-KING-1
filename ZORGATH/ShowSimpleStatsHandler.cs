@@ -43,20 +43,20 @@ public class ShowSimpleStatsHandler : IClientRequestHandler
                 /* NumberOfHeroesOwned: */ NumberOfHeroesTheGameHas,
                 /* TotalMatchesPlayed: */ 
                     // Public
-                    account.PlayerSeasonStatsPublic.Wins + account.PlayerSeasonStatsPublic.Losses +
+                    account.PlayerSeasonStatsPublic.AprilFirstWins + account.PlayerSeasonStatsPublic.AprilFirstLosses +
                     // Ranked
-                    account.PlayerSeasonStatsRanked.Wins + account.PlayerSeasonStatsRanked.Losses +
+                    account.PlayerSeasonStatsRanked.AprilFirstWins + account.PlayerSeasonStatsRanked.AprilFirstLosses +
                     // Casual
-                    account.PlayerSeasonStatsRankedCasual.Wins + account.PlayerSeasonStatsRankedCasual.Losses +
+                    account.PlayerSeasonStatsRankedCasual.AprilFirstWins + account.PlayerSeasonStatsRankedCasual.AprilFirstLosses +
                     // Mid Wars
-                    account.PlayerSeasonStatsMidWars.Wins + account.PlayerSeasonStatsMidWars.Losses,
+                    account.PlayerSeasonStatsMidWars.Wins + account.PlayerSeasonStatsMidWars.AprilFirstLosses,
                 /* PlayerAwardSummary: */ CombinedPlayerAwardSummary.AddUp(account.PlayerSeasonStatsPublic.PlayerAwardSummary, account.PlayerSeasonStatsRanked.PlayerAwardSummary, account.PlayerSeasonStatsRankedCasual.PlayerAwardSummary, account.PlayerSeasonStatsMidWars.PlayerAwardSummary),
                 /* SelectedUpgrades: */ account.SelectedUpgradeCodes,
                 /* UnlockedUpgradeCodes: */ account.User.UnlockedUpgradeCodes,
                 /* AccountId: */ account.AccountId,
                 /* SeasonId: */ CurrentSeason,
-                /* SeasonNormal: */ new SeasonShortSummary(account.PlayerSeasonStatsRanked.Wins + account.PlayerSeasonStatsMidWars.Wins, account.PlayerSeasonStatsRanked.Losses + account.PlayerSeasonStatsMidWars.Losses, 0, 0),
-                /* SeasonCasual: */ new SeasonShortSummary(account.PlayerSeasonStatsRankedCasual.Wins, account.PlayerSeasonStatsRankedCasual.Losses, 0, 0))
+                /* SeasonNormal: */ new SeasonShortSummary(account.PlayerSeasonStatsRanked.AprilFirstWins + account.PlayerSeasonStatsMidWars.AprilFirstWins, account.PlayerSeasonStatsRanked.AprilFirstLosses + account.PlayerSeasonStatsMidWars.AprilFirstLosses, 0, 0),
+                /* SeasonCasual: */ new SeasonShortSummary(account.PlayerSeasonStatsRankedCasual.AprilFirstWins, account.PlayerSeasonStatsRankedCasual.AprilFirstLosses, 0, 0))
             )
             .FirstOrDefaultAsync();
 

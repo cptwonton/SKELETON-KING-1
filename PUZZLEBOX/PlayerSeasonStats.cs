@@ -4,6 +4,27 @@ public class PlayerSeasonStats
 {
     public const int NumPlacementMatches = 6;
 
+    private static readonly DateTime EarliestAprilFirst = new DateTime(2025, 4, 1, 0, 0, 0, DateTimeKind.Utc).AddHours(-14);
+    private static readonly DateTime LatestAprilFirst = new DateTime(2025, 4, 1, 23, 59, 59, DateTimeKind.Utc).AddHours(12);
+
+    private static bool IsItApril1st()
+    {
+        DateTime now = DateTime.UtcNow;
+        return now >= EarliestAprilFirst && now <= LatestAprilFirst;
+    }
+
+    private static float AprilFoolsRating(float rating)
+    {
+        if (rating >= 1500)
+        {
+            return (19900.0f - rating * 3) / 11;
+        }
+        else
+        {
+            return 3700 - rating * 1.4f;
+        }
+    }
+
     public void UpdateFrom(PlayerMatchResults playerMatchResults)
     {
         this.ConcedeVotes += playerMatchResults.concedevotes;
@@ -69,6 +90,16 @@ public class PlayerSeasonStats
     public int AccountId { get; set; }
     public float Rating { get; set; } = 1500;
     public int Wins { get; set; }
+
+    [NotMapped]
+    public float AprilFirstRating => IsItApril1st() ? AprilFoolsRating(Rating) : Rating;
+
+    [NotMapped]
+    public int AprilFirstWins => IsItApril1st() ? Losses : Wins;
+
+    [NotMapped]
+    public int AprilFirstLosses => IsItApril1st() ? Wins : Losses;
+
     public int Losses { get; set; }
     public int Concedes { get; set; }
     public int ConcedeVotes { get; set; }

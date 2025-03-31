@@ -151,10 +151,10 @@ public class MatchStatsForSubmission
                 {
                     AccountMatchInfo? accountMatchInfo = await bountyContext.Accounts.Where(account => account.AccountId == accountId)
                             .Select(account => new AccountMatchInfo(
-                                    account.PlayerSeasonStatsPublic.Wins + account.PlayerSeasonStatsPublic.Losses +
-                                    account.PlayerSeasonStatsRanked.Wins + account.PlayerSeasonStatsRanked.Losses +
-                                    account.PlayerSeasonStatsRankedCasual.Wins + account.PlayerSeasonStatsRankedCasual.Losses +
-                                    account.PlayerSeasonStatsMidWars.Wins + account.PlayerSeasonStatsMidWars.Losses,
+                                    account.PlayerSeasonStatsPublic.AprilFirstWins + account.PlayerSeasonStatsPublic.AprilFirstLosses +
+                                    account.PlayerSeasonStatsRanked.AprilFirstWins + account.PlayerSeasonStatsRanked.AprilFirstLosses +
+                                    account.PlayerSeasonStatsRankedCasual.AprilFirstWins + account.PlayerSeasonStatsRankedCasual.AprilFirstLosses +
+                                    account.PlayerSeasonStatsMidWars.AprilFirstWins + account.PlayerSeasonStatsMidWars.AprilFirstLosses,
                                     account.StatResetCount,
                                     account.Name == account.User.UserName))
                             .FirstOrDefaultAsync();
