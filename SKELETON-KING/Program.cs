@@ -21,8 +21,13 @@ public class Program
             options.UseSqlServer(connectionString, connection => connection.MigrationsAssembly("SKELETON-KING")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
-        // TODO: store in a configuration file.
-        ChatServerConfiguration chatServerConfiguration = new ChatServerConfiguration("localhost", 11031, 11032, 11033);
+        // Load chat server configuration from appsettings.json
+        var chatServerConfig = builder.Configuration.GetSection("ChatServer");
+        ChatServerConfiguration chatServerConfiguration = new ChatServerConfiguration(
+            chatServerConfig["Address"] ?? "localhost",
+            short.Parse(chatServerConfig["ClientPort"] ?? "11031"),
+            short.Parse(chatServerConfig["ServerPort"] ?? "11032"),
+            short.Parse(chatServerConfig["ManagerPort"] ?? "11033"));
         ConcurrentDictionary<string, SrpAuthSessionData> srpAuthSessions = new();
 
         builder.Services.AddSingleton<IReadOnlyDictionary<string, IClientRequestHandler>>(
