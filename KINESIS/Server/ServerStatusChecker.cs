@@ -1,5 +1,7 @@
 ﻿namespace KINESIS.Server;
 
+using PUZZLEBOX;
+
 public class ServerStatusChecker
 {
     public delegate void Callback(bool success);
@@ -11,10 +13,12 @@ public class ServerStatusChecker
     private readonly byte[] _receiveBuffer = new byte[3];
     private readonly Dictionary<ushort, Request> _requests = new();
     private ushort _requestId;
+    private readonly ServerStatusCheckerConfiguration _configuration;
 
-    public ServerStatusChecker()
+    public ServerStatusChecker(ServerStatusCheckerConfiguration configuration)
     {
         Instance = this;
+        _configuration = configuration;
     }
 
     public void Start()
@@ -72,15 +76,24 @@ public class ServerStatusChecker
             Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             try
             {
-                socket.Connect(IPAddress.Loopback, 999);
+                // Use the configured address and port instead of hardcoded values
+                IPAddress serverAddress = _configuration.Address == "localhost" || _configuration.Address == "127.0.0.1" 
+                    ? IPAddress.Loopback 
+                    : IPAddress.Parse(_configuration.Address);
+                
+                socket.Connect(serverAddress, _configuration.Port);
             }
             catch (Exception e)
             {
-                Console.WriteLine("ServerStatusChecker does not appear to be running: {0}", e.Message);
+                Console.WriteLine("ServerStatusChecker does not appear to be running at {0}:{1}: {2}", 
+                    _configuration.Address, _configuration.Port, e.Message);
+                
+                // Add a delay before retrying to avoid excessive CPU usage and log spam
+                Thread.Sleep(5000);
                 continue;
             }
 
-            Console.WriteLine("Connected to ServerStatusChecker.");
+            Console.WriteLine("Connected to ServerStatusChecker at {0}:{1}.", _configuration.Address, _configuration.Port);
 
             lock (this)
             {

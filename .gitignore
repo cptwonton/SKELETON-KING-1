@@ -1,6 +1,7 @@
 # Ignore local editor data
 .idea
 .vs
+.vscode
 EBULA/bin
 EBULA/obj
 KINESIS/bin
@@ -14,3 +15,9 @@ TRANSMUTANSTEIN/bin
 TRANSMUTANSTEIN/obj
 ZORGATH/bin
 ZORGATH/obj
+MockServerStatusChecker/bin
+MockServerStatusChecker/obj
+
+# OS specific files
+.DS_Store
+Thumbs.db

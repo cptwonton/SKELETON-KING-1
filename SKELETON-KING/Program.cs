@@ -78,6 +78,13 @@ public class Program
 
         builder.Services.AddSingleton<ChatServerConfiguration>(chatServerConfiguration);
         builder.Services.AddSingleton<ChatServer>();
+        // Load server status checker configuration from appsettings.json
+        var serverStatusCheckerConfig = builder.Configuration.GetSection("ServerStatusChecker");
+        ServerStatusCheckerConfiguration serverStatusCheckerConfiguration = new ServerStatusCheckerConfiguration(
+            serverStatusCheckerConfig["Address"] ?? "localhost",
+            int.Parse(serverStatusCheckerConfig["Port"] ?? "999"));
+
+        builder.Services.AddSingleton<ServerStatusCheckerConfiguration>(serverStatusCheckerConfiguration);
         builder.Services.AddSingleton<ServerStatusChecker>();
         builder.Services.AddControllers().AddApplicationPart(typeof(ClientRequesterController).Assembly);
 
